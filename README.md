@@ -117,7 +117,10 @@ This mirrors strategies used in:
 ## Performance Visualization
 
 ### Graph 1: Execution Time vs Number of Threads
-**File:** `images/execution_time_vs_threads.png`
+<p align="center">
+  <img src="images/execution_time_vs_threads.png" width="700">
+</p>
+
 
 This line graph shows how total execution time changes as thread count increases.
 
@@ -129,7 +132,10 @@ This line graph shows how total execution time changes as thread count increases
 ---
 
 ### Graph 2: Scheduler Comparison per Thread Count
-**File:** `images/scheduler_comparison.png`
+<p align="center">
+  <img src="images/ml_speedup.png" width="700">
+</p>
+
 
 This grouped bar chart compares FIFO, Random, and ML schedulers at fixed thread counts.
 
