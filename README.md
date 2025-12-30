@@ -160,13 +160,26 @@ This grouped bar chart compares FIFO, Random, and ML schedulers at fixed thread 
 - Prediction errors affect ordering
 - FIFO naturally approaches optimal behavior
 
-### Key Insight
-> **ML-based scheduling is most effective when resources are constrained.**  
-> As available parallelism increases, simpler heuristics often perform just as well or better.
+### Performance Analysis & Key Insights
+> This project includes a comprehensive [Results and Analysis Report](./ResultsandAnalysis.pdf)comparing the ML-based scheduler against FIFO and Random baselines.
 
-This reflects real-world system behavior.
+The "Diminishing Returns" Discovery
+The most significant finding was that ML scheduling is not a "silver bullet." Its effectiveness is inversely proportional to the degree of parallelism:
 
----
+- Low Parallelism (2-4 Threads): The ML scheduler is highly effective, achieving 10-20% speedups. When resources are scarce, task ordering is critical to prevent thread idling.
+- High Parallelism (16+ Threads): The ML scheduler's performance degrades, sometimes falling behind simple FIFO.
+
+
+Why the shift?
+
+1. Scheduling Overhead: At high thread counts, the time spent on ML inference and sorting exceeds the time saved by the "smarter" order.
+2. The Ceiling Effect: When many threads are available, almost all tasks start immediately, leaving very little room for optimization.
+3. Prediction Sensitivity: In highly parallel environments, small errors in runtime prediction have a disproportionately large impact on the final "makespan."
+
+
+Engineering Conclusion:
+This analysis demonstrates a mature systems-design principle: ML should be applied where resources are constrained and tasks are heterogeneous. For high-throughput, massive-scale parallelism, the low-overhead "simplicity" of FIFO is often superior.
+
 
 ## Project Structure
 
@@ -189,6 +202,7 @@ ml_parallel_scheduler/
 ├── images/
 │   ├── execution_time_vs_threads.png
 │   └── scheduler_comparison.png
+|── ResultsandAnalysis.pdf
 │
 └── README.md
 
