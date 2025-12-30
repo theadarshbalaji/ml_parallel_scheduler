@@ -161,7 +161,7 @@ This grouped bar chart compares FIFO, Random, and ML schedulers at fixed thread 
 - FIFO naturally approaches optimal behavior
 
 ### Performance Analysis & Key Insights
-> This project includes a comprehensive [Results and Analysis Report](./ResultsandAnalysis.pdf)comparing the ML-based scheduler against FIFO and Random baselines.
+> This project includes a comprehensive [Results and Analysis Report](./ResultsandAnalysis.pdf) comparing the ML-based scheduler against FIFO and Random baselines.
 
 The "Diminishing Returns" Discovery
 The most significant finding was that ML scheduling is not a "silver bullet." Its effectiveness is inversely proportional to the degree of parallelism:
