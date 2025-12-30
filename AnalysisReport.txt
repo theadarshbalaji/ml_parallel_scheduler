@@ -1,0 +1,197 @@
+ML-Based Parallel Task Scheduler
+Final Results and Analysis
+==================================
+
+1. Project Objective
+--------------------
+The objective of this project was to design and evaluate a Machine Learning
+based task scheduler for a multi-core CPU environment and compare it against
+traditional scheduling strategies such as FIFO and Random scheduling.
+
+Rather than assuming ML would always outperform baseline methods, this project
+intentionally evaluates scheduler behavior under varying degrees of parallelism
+to understand **when ML helps, when it does not, and why**.
+
+
+2. Experimental Setup
+---------------------
+The system schedules independent CPU-bound tasks characterized by features
+such as:
+- Task size
+- Computational complexity
+- Estimated workload
+
+A regression-based ML model predicts task execution time.
+Tasks are then ordered based on predicted runtime and scheduled accordingly.
+
+Experiments were conducted across multiple thread counts:
+- 2 threads
+- 4 threads
+- 8 threads
+- 16 threads
+
+Performance was evaluated using:
+- Total execution time (makespan)
+- Relative speedup compared to baseline schedulers
+
+
+3. Summary of Observed Results
+------------------------------
+The experimental results show a clear trend:
+
+- At low thread counts (2–4):
+  ML-based scheduling significantly reduces total execution time.
+
+- At moderate thread counts (8):
+  Performance differences between schedulers become marginal.
+
+- At high thread counts (16):
+  ML scheduling sometimes underperforms compared to FIFO or Random scheduling.
+
+This non-monotonic behavior is a key insight of the project.
+
+
+4. Why ML Scheduling Performs Well at Low Thread Counts
+-------------------------------------------------------
+When the number of threads is small, CPU resources are constrained.
+Only a few tasks can run simultaneously, so task ordering has a strong impact
+on overall performance.
+
+In this scenario:
+- Poor scheduling leads to long tasks blocking threads
+- Short tasks finish early, causing idle CPU time
+- Load imbalance significantly increases makespan
+
+ML-based scheduling helps by:
+- Predicting task runtimes
+- Executing longer tasks earlier
+- Filling remaining gaps with shorter tasks
+
+Numerically:
+- Even small improvements in ordering reduce idle time
+- ML scheduling achieved noticeable speedups (≈10–20%) over FIFO
+
+In simple terms:
+"When there are fewer workers, choosing the right job order matters a lot."
+
+
+5. Why Performance Differences Shrink at Moderate Thread Counts
+---------------------------------------------------------------
+At moderate parallelism (8 threads):
+- More tasks can execute concurrently
+- CPU utilization is naturally high
+- Scheduling errors are masked by parallel execution
+
+As a result:
+- FIFO, Random, and ML schedulers converge in performance
+- ML still performs slightly better, but gains are small (≈1–3%)
+
+This demonstrates diminishing returns of intelligent scheduling
+as resource availability increases.
+
+
+6. Why ML Scheduling Fails or Underperforms at High Thread Counts
+----------------------------------------------------------------
+At high thread counts (16), ML scheduling sometimes performs worse.
+This is not a flaw in implementation, but a fundamental systems effect.
+
+
+6.1 Scheduling Overhead Dominates
+---------------------------------
+ML scheduling introduces overhead due to:
+- Runtime prediction
+- Task sorting
+- Decision logic
+
+At high parallelism:
+- Individual tasks become short-lived
+- Overhead becomes comparable to actual computation time
+
+As a result:
+- Extra scheduling logic increases total execution time
+
+Simple explanation:
+"When tasks are tiny, deciding how to schedule them costs more than just running them."
+
+
+6.2 Prediction Errors Become More Costly
+----------------------------------------
+The ML model is inherently imperfect.
+
+At high thread counts:
+- Many tasks start almost simultaneously
+- Incorrect ordering provides little benefit
+- Prediction errors directly affect scheduling quality
+
+Unlike low-thread scenarios where errors are amortized,
+high parallelism leaves no room for correction.
+
+Simple explanation:
+"When everything runs at once, wrong guesses hurt more."
+
+
+6.3 Diminishing Optimization Opportunity
+----------------------------------------
+With many threads available:
+- Most tasks begin execution immediately
+- Thread idle time is already minimal
+- Load imbalance is naturally low
+
+This creates a ceiling effect:
+- FIFO and Random schedulers already approach optimal makespan
+- ML cannot improve what is already near-optimal
+- Any added complexity only degrades performance
+
+Simple explanation:
+"You cannot optimize what is already fully parallel."
+
+
+7. Key Systems Insight
+---------------------
+This project demonstrates an important real-world principle:
+
+**Machine Learning is most beneficial when system resources are constrained.**
+
+ML-based scheduling is effective when:
+- Threads are limited
+- Tasks are heterogeneous
+- Scheduling decisions strongly affect load balance
+
+ML-based scheduling is ineffective or harmful when:
+- Parallelism is high
+- Tasks are short-lived
+- Scheduling overhead dominates computation
+
+
+8. Significance of Results
+--------------------------
+The goal of this project was not to prove that ML always wins.
+Instead, it aimed to understand **where ML should and should not be applied**.
+
+This mirrors real-world systems such as:
+- Linux CPU schedulers
+- Cloud resource managers
+- Distributed computing frameworks
+
+Modern systems often switch strategies dynamically rather than relying
+on a single scheduling policy.
+
+
+9. Final Conclusion
+-------------------
+This project provides a realistic, data-driven evaluation of ML-based
+task scheduling.
+
+Final conclusions:
+- ML scheduling significantly improves performance at low parallelism
+- Benefits diminish as thread count increases
+- At high parallelism, overhead and prediction error outweigh benefits
+
+Overall, this project demonstrates strong understanding of:
+- Parallel computing behavior
+- Performance bottlenecks
+- Machine learning limitations
+- Practical systems design trade-offs
+
+Rather than blindly applying ML, this work shows mature engineering judgment
+by identifying when ML is appropriate and when simpler solutions are superior.
